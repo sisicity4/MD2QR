@@ -1,0 +1,349 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Header */
+.app-header {
+  text-align: center;
+}
+.app-header h1 {
+  margin: 0;
+  font-size: 2.25rem;
+  letter-spacing: -0.02em;
+  color: #f8fafc;
+}
+.app-header .accent {
+  color: #60a5fa;
+}
+.tagline {
+  margin: 0.35rem 0 0;
+  color: #94a3b8;
+  font-size: 0.95rem;
+  text-wrap: balance;
+}
+
+/* 改行制御ユーティリティ */
+.nowrap {
+  white-space: nowrap;
+}
+
+/* Layout */
+.app-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Panes */
+.pane {
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 14px;
+  padding: 1rem 1.1rem 1.1rem;
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.35);
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
+}
+.pane-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.pane-header h2 {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.pane-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Editor (CodeMirror live preview) */
+.editor-host {
+  flex: 1;
+  min-height: 300px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.editor-host .cm-editor {
+  height: 100%;
+  min-height: 300px;
+}
+.editor-host .cm-editor.cm-focused {
+  outline: none;
+}
+.editor-meta {
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+.placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+  text-wrap: pretty;
+}
+
+/* 使用率の色（Twitter風） */
+.usage-text {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+.usage-text.usage-warn {
+  color: #b45309;
+}
+.usage-text.usage-danger,
+.usage-text.usage-over {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+/* 円形（ドーナツ）使用率ゲージ */
+.usage-ring {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex: none;
+}
+.usage-ring-track {
+  stroke: var(--border);
+}
+.usage-ring-progress {
+  stroke: var(--accent);
+  transition:
+    stroke-dashoffset 0.2s ease,
+    stroke 0.2s ease;
+}
+.usage-warn .usage-ring-progress {
+  stroke: #f59e0b;
+}
+.usage-danger .usage-ring-progress,
+.usage-over .usage-ring-progress {
+  stroke: #dc2626;
+}
+.usage-ring-remaining {
+  position: absolute;
+  font-size: 0.62rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #dc2626;
+  line-height: 1;
+}
+
+/* QRパネルの軽い注意（黄段階） */
+.notice {
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  padding: 0.5rem 0.7rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin: 0 0 0.5rem;
+  text-wrap: pretty;
+}
+
+/* QR pane */
+.qr-pane {
+  min-height: auto;
+}
+.qr-body {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.qr-canvas-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 260px;
+  min-height: 260px;
+  padding: 0.75rem;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+/* 画面が狭いときはQRをコンテナ幅に収める */
+.qr-canvas-wrap canvas {
+  max-width: 100%;
+  height: auto !important;
+}
+.qr-status {
+  flex: 1;
+  min-width: 220px;
+}
+.qr-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0.5rem 0 0;
+}
+.qr-error {
+  color: var(--error-text);
+  background: var(--error-bg);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  text-align: center;
+  margin: 0;
+  text-wrap: pretty;
+}
+.warning {
+  color: var(--warning-text);
+  background: var(--warning-bg);
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+/* Buttons */
+.primary-button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.15s ease;
+}
+.primary-button:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+.primary-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.ghost-button {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.8rem;
+}
+.ghost-button:hover {
+  background: var(--surface-muted);
+}
+
+/* Quality (誤り訂正レベル) ドロップダウン */
+.quality-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.quality-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+.quality-select {
+  font-family: inherit;
+  font-size: 0.8rem;
+  color: var(--text);
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.35rem 0.55rem;
+  cursor: pointer;
+}
+.quality-select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* Footer */
+.app-footer {
+  text-align: center;
+  color: #64748b;
+  font-size: 0.8rem;
+  text-wrap: balance;
+}
+
+/* ===== Responsive ===== */
+
+/* PC（広い画面）: エディタとQRを横並びにして横幅を活用。QRは追従(sticky)。 */
+@media (min-width: 900px) {
+  .app-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 1.25rem;
+    align-items: start;
+  }
+  .editor-pane {
+    min-height: 70vh;
+  }
+  .qr-pane {
+    position: sticky;
+    top: 1rem;
+  }
+  .qr-body {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .qr-canvas-wrap {
+    align-self: center;
+  }
+}
+
+/* タブレット・スマホ: 縦積み。QRの説明文は下に回す。 */
+@media (max-width: 899px) {
+  .qr-body {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .qr-canvas-wrap {
+    align-self: center;
+  }
+}
+
+/* スマホ: 余白を詰め、見出し・QRを画面に合わせる。 */
+@media (max-width: 600px) {
+  body #root {
+    padding: 1rem;
+  }
+  .app {
+    gap: 1rem;
+  }
+  .app-header h1 {
+    font-size: 1.85rem;
+  }
+  .tagline {
+    font-size: 0.85rem;
+  }
+  .pane {
+    padding: 0.85rem 0.9rem 0.95rem;
+    min-height: 260px;
+  }
+  .qr-canvas-wrap {
+    min-width: 0;
+    width: 100%;
+    min-height: 0;
+  }
+  .editor-meta {
+    flex-wrap: wrap;
+    row-gap: 0.35rem;
+  }
+}

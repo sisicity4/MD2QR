@@ -1,0 +1,50 @@
+import { useMemo, useState } from "react";
+import { MarkdownEditor } from "./components/MarkdownEditor";
+import { QrPanel } from "./components/QrPanel";
+import { QR_LEVEL, usageInfo, type ErrorCorrectionLevel } from "./qr";
+import "./App.css";
+
+export default function App() {
+  const [markdown, setMarkdown] = useState("");
+  const [level, setLevel] = useState<ErrorCorrectionLevel>(QR_LEVEL);
+
+  // 文字数・QR容量の使用状況は markdown と選択レベルから導出する派生値
+  const charCount = useMemo(() => [...markdown].length, [markdown]);
+  const usage = useMemo(() => usageInfo(markdown, level), [markdown, level]);
+
+  return (
+    <div className="app">
+      <header className="app-header">
+        <h1>
+          Mark<span className="accent">QR</span>
+        </h1>
+        <p className="tagline">
+          <span className="nowrap">Markdown in.</span>{" "}
+          <span className="nowrap">QR out.</span>
+        </p>
+      </header>
+
+      <main className="app-main">
+        <MarkdownEditor
+          value={markdown}
+          onChange={setMarkdown}
+          charCount={charCount}
+          usage={usage}
+        />
+        <QrPanel
+          text={markdown}
+          usage={usage}
+          level={level}
+          onLevelChange={setLevel}
+        />
+      </main>
+
+      <footer className="app-footer">
+        <span>
+          <span className="nowrap">100% local.</span>{" "}
+          <span className="nowrap">Nothing leaves this tab.</span>
+        </span>
+      </footer>
+    </div>
+  );
+}
