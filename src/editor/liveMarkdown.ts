@@ -34,13 +34,55 @@ class BulletWidget extends WidgetType {
   }
 }
 
+/** GFM タスクリストのチェックボックス。クリックで [ ] ⇔ [x] をトグルする。 */
+class TaskWidget extends WidgetType {
+  constructor(
+    readonly checked: boolean,
+    readonly from: number,
+    readonly to: number,
+  ) {
+    super();
+  }
+  eq(other: TaskWidget) {
+    return other.checked === this.checked && other.from === this.from;
+  }
+  toDOM(view: EditorView) {
+    const box = document.createElement("span");
+    box.className = "cm-md-task" + (this.checked ? " checked" : "");
+    box.setAttribute("role", "checkbox");
+    box.setAttribute("aria-checked", String(this.checked));
+    box.textContent = this.checked ? "☑" : "☐";
+    box.addEventListener("mousedown", (event) => {
+      event.preventDefault();
+      view.dispatch({
+        changes: {
+          from: this.from,
+          to: this.to,
+          insert: this.checked ? "[ ]" : "[x]",
+        },
+      });
+    });
+    return box;
+  }
+  ignoreEvent() {
+    return false;
+  }
+}
+
 const hide = Decoration.replace({});
 const bullet = Decoration.replace({ widget: new BulletWidget() });
 
 /** 隠すだけの記号ノード（直後スペースは保持）。 */
-const INLINE_MARK_NODES = new Set(["EmphasisMark", "CodeMark"]);
+const INLINE_MARK_NODES = new Set([
+  "EmphasisMark",
+  "CodeMark",
+  "StrikethroughMark",
+]);
 /** 行頭記号ノード（直後の空白1つも一緒に隠す）。 */
 const PREFIX_MARK_NODES = new Set(["HeaderMark", "QuoteMark"]);
+
+/** タスク行かどうか（`- [ ]` / `* [x]` 等）。 */
+const TASK_LINE = /^\s*[-*+]\s+\[[ xX]\]/;
 
 function buildDecorations(view: EditorView): DecorationSet {
   const decos: Range<Decoration>[] = [];
@@ -81,16 +123,34 @@ function buildDecorations(view: EditorView): DecorationSet {
           decos.push(
             Decoration.mark({ class: "cm-md-em" }).range(node.from, node.to),
           );
+        } else if (name === "Strikethrough") {
+          decos.push(
+            Decoration.mark({ class: "cm-md-strike" }).range(node.from, node.to),
+          );
         } else if (name === "InlineCode") {
           decos.push(
             Decoration.mark({ class: "cm-md-code" }).range(node.from, node.to),
+          );
+        } else if (name === "TaskMarker" && !isActive) {
+          // `[ ]` / `[x]` をチェックボックスに置き換える
+          const raw = state.doc.sliceString(node.from, node.to);
+          const checked = /\[[xX]\]/.test(raw);
+          decos.push(
+            Decoration.replace({
+              widget: new TaskWidget(checked, node.from, node.to),
+            }).range(node.from, node.to),
           );
         }
 
         if (name === "ListMark") {
           const text = state.doc.sliceString(node.from, node.to);
           if (!isActive && /^[-*+]$/.test(text)) {
-            decos.push(bullet.range(node.from, node.to));
+            // タスク行の `-` はチェックボックスが代わりになるので消す
+            if (TASK_LINE.test(line.text)) {
+              decos.push(hide.range(node.from, node.to + 1));
+            } else {
+              decos.push(bullet.range(node.from, node.to));
+            }
           }
         } else if (!isActive && node.to > node.from) {
           if (PREFIX_MARK_NODES.has(name)) {
@@ -140,7 +200,7 @@ export const liveMarkdownTheme = EditorView.theme({
     fontSize: "1rem",
   },
   "&.cm-focused": {
-    outline: "2px solid #2563eb",
+    outline: "2px solid var(--accent)",
     outlineOffset: "1px",
     backgroundColor: "#ffffff",
   },
@@ -167,6 +227,14 @@ export const liveMarkdownTheme = EditorView.theme({
   // インライン装飾
   ".cm-md-strong": { fontWeight: "700" },
   ".cm-md-em": { fontStyle: "italic" },
+  ".cm-md-strike": { textDecoration: "line-through", color: "#64748b" },
+  ".cm-md-task": {
+    cursor: "pointer",
+    userSelect: "none",
+    color: "var(--accent)",
+    paddingRight: "0.3rem",
+    fontSize: "1.05em",
+  },
   ".cm-md-code": {
     fontFamily: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
     backgroundColor: "#e2e8f0",
@@ -183,7 +251,7 @@ export const liveMarkdownTheme = EditorView.theme({
   },
   // 箇条書きの中黒
   ".cm-md-bullet": {
-    color: "#2563eb",
+    color: "var(--accent)",
     fontWeight: "700",
     paddingRight: "0.25rem",
   },
