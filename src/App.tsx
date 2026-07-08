@@ -39,6 +39,9 @@ export default function App() {
           <span className="nowrap">Markdown in.</span>{" "}
           <span className="nowrap">QR out.</span>
         </p>
+        <p className="demo-hint">
+          A ready-to-scan demo is loaded. Edit the text to make it yours.
+        </p>
         <AccentPicker current={accentId} onSelect={setAccentId} />
       </header>
 

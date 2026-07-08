@@ -26,6 +26,7 @@ import {
 } from "../editor/commands";
 import { UsageRing } from "./UsageRing";
 import type { UsageInfo } from "../qr";
+import { DEMO_MARKDOWN } from "../demo";
 
 interface MarkdownEditorProps {
   value: string;
@@ -33,23 +34,6 @@ interface MarkdownEditorProps {
   charCount: number;
   usage: UsageInfo;
 }
-
-const SAMPLE = `# MarkQR
-
-Write **Markdown** on the left.
-It renders *as you type* — and turns into a QR code below.
-
-- Headings, **bold**, *italic*, ~~strikethrough~~
-- Lists and \`inline code\`
-- [ ] a task to do
-- [x] a task that's done
-
-| Feature | Status |
-| --- | --- |
-| Live preview | ✅ |
-| QR export | ✅ |
-
-> Markdown in. QR out.`;
 
 export function MarkdownEditor({
   value,
@@ -208,9 +192,9 @@ export function MarkdownEditor({
             <button
               type="button"
               className="ghost-button"
-              onClick={() => onChange(SAMPLE)}
+              onClick={() => onChange(DEMO_MARKDOWN)}
             >
-              Sample
+              Demo
             </button>
           ) : (
             <button

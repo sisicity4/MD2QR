@@ -52,6 +52,14 @@
   font-size: 0.95rem;
   text-wrap: balance;
 }
+.demo-hint {
+  margin: 0.35rem auto 0;
+  max-width: 36rem;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  text-wrap: balance;
+}
 
 /* 改行制御ユーティリティ */
 .nowrap {
@@ -400,6 +408,9 @@
   }
   .tagline {
     font-size: 0.85rem;
+  }
+  .demo-hint {
+    font-size: 0.82rem;
   }
   .pane {
     padding: 0.85rem 0.9rem 0.95rem;

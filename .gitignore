@@ -10,6 +10,12 @@ node_modules
 dist
 dist-ssr
 *.local
+coverage
+output/playwright/
+.playwright-cli/
+.env
+.env.*
+!.env.example
 
 # TypeScript incremental build info
 *.tsbuildinfo
