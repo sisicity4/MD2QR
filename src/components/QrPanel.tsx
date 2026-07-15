@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import {
   fitsInQr,
@@ -16,6 +16,9 @@ interface QrPanelProps {
 
 export function QrPanel({ text, usage, level, onLevelChange }: QrPanelProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">(
+    "idle",
+  );
 
   const isEmpty = text.trim().length === 0;
   const fits = fitsInQr(text, level);
@@ -30,6 +33,32 @@ export function QrPanel({ text, usage, level, onLevelChange }: QrPanelProps) {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handleCopyPng = async () => {
+    const canvas = containerRef.current?.querySelector("canvas");
+
+    try {
+      if (!canvas || !navigator.clipboard?.write || !window.ClipboardItem) {
+        throw new Error("PNG clipboard copy is unavailable");
+      }
+
+      const blob = await new Promise<Blob>((resolve, reject) => {
+        canvas.toBlob((result) => {
+          if (result) resolve(result);
+          else reject(new Error("Could not create PNG"));
+        }, "image/png");
+      });
+
+      await navigator.clipboard.write([
+        new ClipboardItem({ "image/png": blob }),
+      ]);
+      setCopyStatus("copied");
+    } catch {
+      setCopyStatus("failed");
+    }
+
+    window.setTimeout(() => setCopyStatus("idle"), 1400);
   };
 
   return (
@@ -54,6 +83,18 @@ export function QrPanel({ text, usage, level, onLevelChange }: QrPanelProps) {
               ))}
             </select>
           </label>
+          <button
+            type="button"
+            className="ghost-button"
+            onClick={handleCopyPng}
+            disabled={isEmpty || !fits}
+          >
+            {copyStatus === "copied"
+              ? "Copied!"
+              : copyStatus === "failed"
+                ? "Copy failed"
+                : "Copy"}
+          </button>
           <button
             type="button"
             className="primary-button"
